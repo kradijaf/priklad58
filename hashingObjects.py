@@ -3,13 +3,13 @@ class Point:
 
     def __init__(self, X : float, Y : float, createID : bool = True) -> None:
         if createID:
-            self.__ID = Point.__count
+            self.__ID = Point.__count      # only points loaded from input need an ID
             Point.__count += 1 
         else:
-            self.__ID = -1      # pro body, na jejichž ID se program neptá, tj. body jiné, než načtené ze vstupu
+            self.__ID = -1      # for points other than loaded from the input
         self.__x = X
         self.__y = Y
-        self.__hash = -1        # hodnota -1 pro nevypočítané atributy
+        self.__hash = -1        # value -1 for uncalculated attributes
         self.__ANN = -1
 
     @property
@@ -40,16 +40,14 @@ class Point:
     def ANN(self, value : int) -> None:
         self.__ANN = value
 
-class Rectangle:
+class Rectangle:        # used for spatial hashes
     def __init__(self, X1 : float, X2 : float, Y1 : float, Y2 : float, hash : int) -> None:
         self.__x1 = X1
         self.__x2 = X2
         self.__y1 = Y1
         self.__y2 = Y2
-        self.__hash = hash
-        self.__points = []
-        self.__pointCount = 0
-        self.__center = Point((X1 + X2) / 2, (Y1 + Y2) / 2, False)
+        self.__hash = hash      # ID of a spatial hash
+        self.__points = []      # list for points inside the spatial hash
 
     @property
     def x1(self) -> float:
@@ -72,18 +70,17 @@ class Rectangle:
         return self.__hash
 
     @property
-    def pointCount(self) -> int:
-        return self.__pointCount
-
-    @property
-    def center(self) -> Point:
-        return self.__center
-
-    @property
     def points(self) -> list:
-        return self.__points 
+        return self.__points
 
     def __addPoint(self, pnt : Point) -> None:
-        """Přidává bod do seznamu bodů."""   
+        """Pushes point into list of points."""   
         self.__points.append(pnt)
-        self.__pointCount += 1
+
+    def __center(self) -> Point:
+        """Returns Point representing center of gravity of given instance of Rectangle."""
+        return Point((self.__x1 + self.__x2) / 2, (self.__y1 + self.__y2) / 2, False)
+
+    def __pointCount(self) -> int:
+        """Returns number of points in list of points."""
+        return len(self.__points)
